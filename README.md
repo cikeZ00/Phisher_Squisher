@@ -21,19 +21,21 @@
 
 **Python 3.5.3 or higher is recommended**
 
-Navigate to line 19, and replace "REPLACE WITH URL" with URL to the login query.
+Run "Scammer_Spammer.py" once, this will generate a "config.json" file.
 
-```Python
-    url = 'REPLACE WITH URL'
+```json
+{
+    "Scammer_Spammer": {
+        "URL": "URL Goes here",
+        "Email_Param": "login_email",
+        "Password_Param": "login_password"
+    }
+}
 ```
-Navigate to lines 89-92 and replace "login_email" and "login_password" with the parameters specified in the POST request.
+Open config.json and replace "URL Goes here" with URL to the login query.
+Also replace "login_email" and "login_password" with the parameters specified in the POST request.
 
-```Python
-    s.post(url, allow_redirects=False, verify=False, data={
-		'login_email': username,
-		'login_password': password,
-	})
- ```
+
 If proxies need to be used, uncomment line 13 (deleting the #) and add proxies as needed lines 5-8.
 ```Python
 #s.proxies = proxies
