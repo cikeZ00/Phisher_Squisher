@@ -1,5 +1,22 @@
 #Import Libraries
-import names, requests, random, string, os, urllib3
+import names, requests, random, string, os, urllib3, json
+
+# Config generation and loading
+default_config = {
+    "Scammer_Spammer": {
+        "URL": "URL Goes here",
+        "Email_Param": "login_email",
+        "Password_Param": "login_password"
+    }
+}
+if not os.path.exists("config.json"):
+    with open('config.json', 'w') as configout:
+        json.dump(default_config, configout, indent=4)
+    print("config.json generated!")
+    quit()
+else:
+    with open("config.json") as f:
+        config = json.load(f)
 
 #Add proxies here. Need both HTTP and HTTPS.
 proxies = {
@@ -15,8 +32,20 @@ s = requests.Session()
 chars = string.ascii_letters + string.digits + '!@#$%^&*()'
 random.seed = (os.urandom(1024))
 
-#Replace with Scammer URL (Usually ends in .PHP but doesn't have to)
-url = 'REPLACE WITH URL'
+# Email provder list
+e_provder = ['@yahoo.com', '@gmail.com', '@gmx.com', '@icloud.com', '@mail.com', '@gmx.us', '@outlook.com', '@aol.com', '@comcast.net']
+
+# Load params from config file
+url = config["Scammer_Spammer"]["URL"]
+email_param = config["Scammer_Spammer"]["Email_Param"]
+pass_param = config["Scammer_Spammer"]["Password_Param"]
+
+# Function for clearing console output
+def clearConsole():
+    command = 'clear'
+    if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
+        command = 'cls'
+    os.system(command)
 
 print('Started')
 
@@ -57,25 +86,7 @@ while True:
 
 
     #Chooses email provider
-    pickprov = random.choice([1,1,2,3,4,5,6,7,8,9])
-    if pickprov == 1:
-        username = name.lower() + '@yahoo.com'
-    if pickprov == 2:
-        username = name.lower() + '@gmail.com'
-    if pickprov == 3:
-        username = name.lower() + '@gmx.com'
-    if pickprov == 4:
-        username = name.lower() + '@icloud.com'
-    if pickprov == 5:
-        username = name.lower() + '@mail.com'
-    if pickprov == 6:
-        username = name.lower() + '@gmx.us'
-    if pickprov == 7:
-        username = name.lower() + '@outlook.com'
-    if pickprov == 8:
-        username = name.lower() + '@aol.com'
-    if pickprov == 9:
-        username = name.lower() + '@comcast.net'
+    username = name.lower() + random.choice(e_provder)
 
     #Chooses randomly generated password between 8-16 characters long
     password = ''.join(random.choice(chars) for i in range(random.choice([8,8,8,9,10,11,12,13,14,15,16,17,18,19,20])))
@@ -86,12 +97,14 @@ while True:
 
     #Make post request
     #Replace parameters as needed.
-    s.post(url, allow_redirects=False, verify=False, data={
-		'login_email': username,
-		'login_password': password,
+    response= s.post(url, allow_redirects=False, verify=False, data={
+		email_param: username,
+		pass_param: password,
 	})
 
     #prints output
+    clearConsole()
     print()
     print("Sending username: " + username + " and Password: " + password )
     print("To: " + url)
+    print(f'Status: {response.status_code}')
